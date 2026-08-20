@@ -1,11 +1,11 @@
 {
-    "name": "crack",
-    "short_name": "crack",
+    "name": "EL MUNDO DEL PERNO",
+    "short_name": "MUNDO DEL PERNO",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
     "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "description": "Aplicación de EL MUNDO DEL PERNO.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

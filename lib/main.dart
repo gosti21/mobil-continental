@@ -1,53 +1,48 @@
-import 'package:flutter/material.dart';
 import 'package:crack/screens/login_screen.dart';
+import 'package:flutter/material.dart';
 
-void main() {
-  runApp(const MainApp());
-}
+void main() => runApp(const MundoDelPernoApp());
 
-class MainApp extends StatelessWidget {
-  const MainApp({super.key});
-
+class MundoDelPernoApp extends StatelessWidget {
+  const MundoDelPernoApp({super.key});
   @override
   Widget build(BuildContext context) {
-    final colorScheme = ColorScheme.fromSeed(
-      seedColor: const Color(0xFF0F4C81),
-      primary: const Color(0xFF0F4C81),
-      secondary: const Color(0xFF2A9D8F),
-      surface: const Color(0xFFF4F7FB),
-    );
-
+    const orange = Color(0xFFF45B0B);
     return MaterialApp(
       debugShowCheckedModeBanner: false,
+      title: 'El Mundo del Perno Admin',
       theme: ThemeData(
-        colorScheme: colorScheme,
-        scaffoldBackgroundColor: const Color(0xFFF4F7FB),
         useMaterial3: true,
+        fontFamily: 'Roboto',
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: orange,
+          brightness: Brightness.light,
+          primary: orange,
+          secondary: const Color(0xFFFFA726),
+          surface: const Color(0xFFF6F4F1),
+        ),
+        scaffoldBackgroundColor: const Color(0xFFF2F1EF),
         appBarTheme: const AppBarTheme(
-          backgroundColor: Color(0xFF0F4C81),
+          backgroundColor: Color(0xFF171717),
           foregroundColor: Colors.white,
-          centerTitle: false,
-          elevation: 0,
         ),
         cardTheme: CardThemeData(
           color: Colors.white,
           elevation: 0,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
         ),
         inputDecorationTheme: InputDecorationTheme(
           filled: true,
-          fillColor: Colors.white,
+          fillColor: const Color(0xFFF7F7F7),
           border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-            borderSide: const BorderSide(color: Color(0xFFD8E0EA)),
-          ),
-          enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-            borderSide: const BorderSide(color: Color(0xFFD8E0EA)),
+            borderRadius: BorderRadius.circular(14),
+            borderSide: BorderSide.none,
           ),
           focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-            borderSide: const BorderSide(color: Color(0xFF0F4C81), width: 1.5),
+            borderRadius: BorderRadius.circular(14),
+            borderSide: const BorderSide(color: orange, width: 1.6),
           ),
         ),
       ),

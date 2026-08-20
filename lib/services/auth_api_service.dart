@@ -1,52 +1,76 @@
 import 'dart:convert';
-
 import 'package:crack/config/api_config.dart';
 import 'package:http/http.dart' as http;
 
 class AuthResult {
-  AuthResult({required this.token, required this.roles});
-
-  final String token;
+  const AuthResult({
+    required this.token,
+    required this.name,
+    required this.roles,
+  });
+  final String token, name;
   final List<String> roles;
 }
 
 class AuthApiService {
-  Future<AuthResult> login({required String email, required String password}) async {
+  Future<AuthResult> login({
+    required String email,
+    required String password,
+  }) async {
     final response = await http.post(
-      ApiConfig.authLoginUri,
+      ApiConfig.uri('/api/v1/auth/login'),
       headers: const {
-        'Content-Type': 'application/json',
         'Accept': 'application/json',
+        'Content-Type': 'application/json',
       },
       body: jsonEncode({'email': email, 'password': password}),
     );
-
+    final body = _json(response.body);
     if (response.statusCode < 200 || response.statusCode >= 300) {
-      throw Exception('Credenciales invalidas o acceso denegado.');
+      throw Exception(
+        body['message']?.toString() ?? 'Correo o contraseña incorrectos.',
+      );
     }
-
-    final decoded = jsonDecode(response.body);
-    if (decoded is! Map<String, dynamic>) {
-      throw Exception('Formato de respuesta invalido en login.');
+    final user = body['user'] is Map<String, dynamic>
+        ? body['user'] as Map<String, dynamic>
+        : <String, dynamic>{};
+    final roles = (user['roles'] is List ? user['roles'] as List : const [])
+        .map((role) => role.toString().toLowerCase())
+        .toList(growable: false);
+    if (!roles.any({'admin', 'superusuario', 'superuser'}.contains)) {
+      throw Exception('Esta aplicación es exclusiva para administradores.');
     }
-
-    final token = decoded['token'];
-    final user = decoded['user'];
-
-    if (token is! String || token.isEmpty) {
-      throw Exception('No se recibio token de autenticacion.');
+    final token = body['token']?.toString() ?? '';
+    if (token.isEmpty) {
+      throw Exception('El servidor no devolvió un token de acceso.');
     }
-
-    final rolesDynamic = user is Map<String, dynamic> ? user['roles'] : null;
-    final roles = rolesDynamic is List
-        ? rolesDynamic.whereType<String>().map((role) => role.toLowerCase()).toList(growable: false)
-        : const <String>[];
-
-    return AuthResult(token: token, roles: roles);
+    ApiConfig.setAccessToken(token);
+    return AuthResult(
+      token: token,
+      name: user['name']?.toString() ?? 'Administrador',
+      roles: roles,
+    );
   }
 
-  bool canAccessAdminArea(List<String> roles) {
-    const allowedRoles = <String>{'admin', 'superusuario', 'superuser'};
-    return roles.any(allowedRoles.contains);
+  Future<void> logout() async {
+    if (ApiConfig.accessToken.isNotEmpty) {
+      await http.post(
+        ApiConfig.uri('/api/v1/auth/logout'),
+        headers: {
+          'Accept': 'application/json',
+          'Authorization': 'Bearer ${ApiConfig.accessToken}',
+        },
+      );
+    }
+    ApiConfig.setAccessToken('');
+  }
+
+  Map<String, dynamic> _json(String value) {
+    try {
+      final decoded = jsonDecode(value);
+      return decoded is Map<String, dynamic> ? decoded : {};
+    } catch (_) {
+      return {};
+    }
   }
 }
