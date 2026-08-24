@@ -11,6 +11,7 @@ class InventoryItem {
     required this.minimumStock,
     required this.price,
     required this.features,
+    required this.isActive,
     this.imageUrl,
   });
 
@@ -18,6 +19,7 @@ class InventoryItem {
   final String name, model, brand, sku;
   final double price;
   final List<String> features;
+  final bool isActive;
   final String? imageUrl;
   bool get hasLowStock => stock <= minimumStock;
   bool get isOutOfStock => stock <= 0;
@@ -40,6 +42,7 @@ class InventoryItem {
       stock: _integer(json['stock']),
       minimumStock: _integer(json['stock_min']),
       price: double.tryParse(json['selling_price']?.toString() ?? '') ?? 0,
+      isActive: _boolean(product['status']),
       features: rawFeatures
           .whereType<Map<String, dynamic>>()
           .map((value) => value['description']?.toString() ?? '')
@@ -51,4 +54,10 @@ class InventoryItem {
 
   static int _integer(dynamic value) =>
       int.tryParse(value?.toString() ?? '') ?? 0;
+
+  static bool _boolean(dynamic value) {
+    if (value is bool) return value;
+    final normalized = value?.toString().trim().toLowerCase();
+    return normalized == '1' || normalized == 'true' || normalized == 'active';
+  }
 }

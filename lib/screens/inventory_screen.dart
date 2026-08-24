@@ -621,7 +621,10 @@ class _InventoryCard extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 8),
-                    Row(
+                    Wrap(
+                      spacing: 7,
+                      runSpacing: 7,
+                      crossAxisAlignment: WrapCrossAlignment.center,
                       children: [
                         Container(
                           padding: const EdgeInsets.symmetric(
@@ -645,7 +648,44 @@ class _InventoryCard extends StatelessWidget {
                             ),
                           ),
                         ),
-                        const Spacer(),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 9,
+                            vertical: 5,
+                          ),
+                          decoration: BoxDecoration(
+                            color: (item.isActive
+                                    ? const Color(0xFF187A3D)
+                                    : Colors.blueGrey)
+                                .withValues(alpha: .1),
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                item.isActive
+                                    ? Icons.check_circle_rounded
+                                    : Icons.pause_circle_rounded,
+                                size: 12,
+                                color: item.isActive
+                                    ? const Color(0xFF187A3D)
+                                    : Colors.blueGrey,
+                              ),
+                              const SizedBox(width: 4),
+                              Text(
+                                item.isActive ? 'ACTIVO' : 'INACTIVO',
+                                style: TextStyle(
+                                  color: item.isActive
+                                      ? const Color(0xFF187A3D)
+                                      : Colors.blueGrey,
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.w900,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
                         Text(
                           'S/ ${item.price.toStringAsFixed(2)}',
                           style: const TextStyle(fontWeight: FontWeight.w700),
